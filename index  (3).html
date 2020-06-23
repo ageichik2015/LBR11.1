@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    		<title>Агейчик</title>	
+	<script type="text/javascript">
+	var date= new Date();
+	
+	function Record(text,date) {
+	this.text=text;
+	this.date=date;
+}
+
+function time(date){
+	return ""+date.toLocaleTimeString();
+}
+
+function day(date){
+	return ""+date.toLocaleDateString();
+}
+	 
+	function send(){
+	var r = new Record(
+		document.getElementById("newtext").value, //Создаем запись с текущей датой и с помощью push(r) добавляем новую запись в массив
+			new Date());
+	records.push(r);
+	displayRecords();
+	}
+	
+	
+	
+	function displayRecords(){
+		var text = ""
+		for (var i=0; i<records.length; i++){
+			if (i%3==0) {
+				text += "<p style='background-color:#E8CCFF'>";
+				}
+				if (i%3==1) {
+				text += "<p style='background-color:#E8CCD0'>";
+				}
+				if (i%3==2){
+				text += "<p style='background-color:#D28EFF'>";
+				}
+				text += time(records[i].date) + " ";
+				text += "<strong>" + day(records[i].date) + "</strong><br>";
+				text += records[i].text + "</p>";
+		}
+		document.getElementById("records_place").innerHTML = text;
+	}
+	
+	
+	 function sort(compare){
+	 var l=records.length;
+		
+		for (var i=0;i<l-1; i++) {
+			var j_min = i;
+			for (var j=i+1;j<l; j++){
+				if (compare(records[j],records[j_min])){
+					j_min=j;
+				}
+			}
+			var r=records[j_min];
+			records[j_min] = records[i];
+			records[i] = r;
+		}
+		displayRecords();
+	 }
+	 
+	 
+	 function morning(){
+		var text = ""
+		var odd = true;
+		for (var i in records){
+		if(time(records[i].date)>=time(new Date(2019,10,21,06,00,0,0)) && time(records[i].date)
+								<=time(new Date(2019,10,21,10,00,0,0)))
+						{
+			if (odd) {
+				text += "<p style='background-color:#E8CCFF'>";
+				}else{
+				text += "<p style='background-color:#D28EFF'>";
+				}
+				odd = !odd;
+				text += time(records[i].date) + " ";
+				text += "<strong>" + day(records[i].date) + "</strong><br>";
+				text += records[i].text + "</p>";
+					}
+		document.getElementById("records_place").innerHTML = text;
+			}
+	}
+	
+	function search() {
+		let y=prompt("Поиск:");
+		var text = ""
+		var odd = true;
+		for (var i in records){
+	 if(records[i].text.indexOf(y)>=0){
+		if (odd) {
+				text += "<p style='background-color:#E8CCFF'>";
+				}else{
+				text += "<p style='background-color:#D28EFF'>";
+				}
+				odd = !odd;
+				text += time(records[i].date) + " ";
+				text += "<strong>" + day(records[i].date) + "</strong><br>";
+				text += records[i].text + "</p>";
+					}
+		document.getElementById("records_place").innerHTML = text;
+			}
+	}
+	
+	
+	  var comparers = [
+		function comp1(r1,r2){
+			return r1.date < r2.date;
+		},
+		
+		function comp2(r1,r2){
+			return r1.date > r2.date;
+		},
+		];
+	
+	 var records=[
+	 new Record("Доброе утро!",
+			new Date(2019,11,11,08,00,0,0)),
+	 new Record("Нужно помыть голову!",
+			new Date(2019,11,12,09,00,0,0)),
+	 new Record("Еще немного и опоздаю!",
+			new Date(2019,11,10,12,00,0,0)),
+	 new Record("Ого, успел на 11 маршрутку!",
+			new Date(2019,11,10,12,30,0,0)),		
+	 ];
+	
+		</script>
+	</head>
+	<body onload="displayRecords()">
+
+	<div id="toolbar">
+		<input type="text" id="newtext"/>
+		<input type="button" value="Добавить запись" onclick="send()"/>
+		<p> Найти указанный текст: </p>
+		<p><input type="button" value="Найти" onclick="search()"/></p>
+		<p> Сортировка по дате: </p>
+		<input type="button" value="По возрастанию" onclick="sort(comparers[0])"/>
+		<input type="button" value="По убыванию" onclick="sort(comparers[1])"/>
+		<p> Записи с 6:00 до 10:00: </p>
+		<p><input type="button" value="Утренние" onclick="morning()"/><p>
+		
+	</div>
+	<div id="records_place">
+	</div>
+	</body>
+</html>
